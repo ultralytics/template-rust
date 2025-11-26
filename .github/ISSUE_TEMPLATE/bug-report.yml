@@ -15,10 +15,10 @@ body:
     attributes:
       label: Search before asking
       description: >
-        Please search the Ultralytics [Docs](https://docs.ultralytics.com/) and [issues](https://github.com/ultralytics/template/issues) to see if a similar bug report already exists.
+        Please search the Ultralytics [Docs](https://docs.ultralytics.com/) and [issues](https://github.com/ultralytics/template-rust/issues) to see if a similar bug report already exists.
       options:
         - label: >
-            I have searched the Ultralytics [issues](https://github.com/ultralytics/template/issues) and found no similar bug report.
+            I have searched the Ultralytics [issues](https://github.com/ultralytics/template-rust/issues) and found no similar bug report.
           required: true
 
   - type: dropdown

@@ -1,7 +1,7 @@
 # © 2014-2025 Ultralytics Inc. 🚀 All rights reserved. CONFIDENTIAL: Unauthorized use or distribution prohibited.
 
 description = "Ultralytics Rust project template showcasing a minimal library and binary layout."
-repository = "https://github.com/ultralytics/template"
+repository = "https://github.com/ultralytics/template-rust"
 homepage = "https://www.ultralytics.com/"
 readme = "README.md"
 rust-version = "1.70"

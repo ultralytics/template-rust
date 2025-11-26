@@ -7,10 +7,10 @@ projects at [Ultralytics](https://www.ultralytics.com/). It incorporates best pr
 configuration, and essential tooling to streamline development. By using this template, Ultralytics developers can
 ensure consistency, maintain high quality standards, and accelerate the setup process for new Rust-based software.
 
-[![Template CI](https://github.com/ultralytics/template/actions/workflows/ci.yml/badge.svg)](https://github.com/ultralytics/template/actions/workflows/ci.yml)
-[![Ultralytics Actions](https://github.com/ultralytics/template/actions/workflows/format.yml/badge.svg)](https://github.com/ultralytics/template/actions/workflows/format.yml)
-[![Publish](https://github.com/ultralytics/template/actions/workflows/publish.yml/badge.svg)](https://github.com/ultralytics/template/actions/workflows/publish.yml)
-[![codecov](https://codecov.io/gh/ultralytics/template/graph/badge.svg?token=K9IunpFzjS)](https://codecov.io/gh/ultralytics/template)
+[![Template CI](https://github.com/ultralytics/template-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/ultralytics/template-rust/actions/workflows/ci.yml)
+[![Ultralytics Actions](https://github.com/ultralytics/template-rust/actions/workflows/format.yml/badge.svg)](https://github.com/ultralytics/template-rust/actions/workflows/format.yml)
+[![Publish](https://github.com/ultralytics/template-rust/actions/workflows/publish.yml/badge.svg)](https://github.com/ultralytics/template-rust/actions/workflows/publish.yml)
+[![codecov](https://codecov.io/gh/ultralytics/template-rust/graph/badge.svg?token=K9IunpFzjS)](https://codecov.io/gh/ultralytics/template-rust)
 
 [![Ultralytics Discord](https://img.shields.io/discord/1089800235347353640?logo=discord&logoColor=white&label=Discord&color=blue)](https://discord.com/invite/ultralytics)
 [![Ultralytics Forums](https://img.shields.io/discourse/users?server=https%3A%2F%2Fcommunity.ultralytics.com&logo=discourse&label=Forums&color=blue)](https://community.ultralytics.com/)
@@ -119,8 +119,8 @@ ensuring every project starts on a solid foundation aligned with industry standa
 Ultralytics thrives on community collaboration, and we deeply value your contributions! Whether it's reporting bugs,
 suggesting features, or submitting code changes, your involvement is crucial.
 
-- **Reporting Issues:** Encounter a bug? Please report it on [GitHub Issues](https://github.com/ultralytics/template/issues).
-- **Feature Requests:** Have an idea for improvement? Share it via [GitHub Issues](https://github.com/ultralytics/template/issues).
+- **Reporting Issues:** Encounter a bug? Please report it on [GitHub Issues](https://github.com/ultralytics/template-rust/issues).
+- **Feature Requests:** Have an idea for improvement? Share it via [GitHub Issues](https://github.com/ultralytics/template-rust/issues).
 - **Pull Requests:** Want to contribute code? Please read our [Contributing Guide](https://docs.ultralytics.com/help/contributing/) first, then submit a Pull Request.
 - **Feedback:** Share your thoughts and experiences by participating in our official [Survey](https://www.ultralytics.com/survey?utm_source=github&utm_medium=social&utm_campaign=Survey).
 
@@ -143,7 +143,7 @@ Ultralytics offers two licensing options to accommodate diverse needs:
 ## 📮 Contact
 
 For bug reports or feature suggestions related to this template or other Ultralytics projects, please use
-[GitHub Issues](https://github.com/ultralytics/template/issues). For general questions, discussions, and community
+[GitHub Issues](https://github.com/ultralytics/template-rust/issues). For general questions, discussions, and community
 support, join our [Discord](https://discord.com/invite/ultralytics) server!
 
 <br>
