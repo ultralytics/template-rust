@@ -2,6 +2,8 @@
 
 # 🛠 Ultralytics Rust Project Template
 
+
+
 Welcome to the Ultralytics Rust Project Template! This repository provides a standardized foundation for initiating Rust
 projects at [Ultralytics](https://www.ultralytics.com/). It incorporates best practices in project structure,
 configuration, and essential tooling to streamline development. By using this template, Ultralytics developers can
