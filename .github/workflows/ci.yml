@@ -37,7 +37,7 @@ jobs:
         run: cargo clippy --all-targets --all-features -- -D warnings
 
       - name: Tests
-        run: cargo test --all --all-features --locked
+        run: cargo test --all --all-features
 
   coverage:
     runs-on: ubuntu-latest
