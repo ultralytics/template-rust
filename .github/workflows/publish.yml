@@ -3,8 +3,6 @@
 name: Publish
 
 on:
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       dry_run:
@@ -12,18 +10,75 @@ on:
         required: false
         default: false
         type: boolean
+  push:
+    branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  publish:
+  check:
+    if: github.repository == 'ultralytics/template-rust'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      current_tag: ${{ steps.tags.outputs.current_tag }}
+      previous_tag: ${{ steps.tags.outputs.previous_tag }}
+      should_publish: ${{ steps.tags.outputs.should_publish }}
+      is_dry_run: ${{ steps.tags.outputs.is_dry_run }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch tags
+        run: git fetch --tags --force
+
+      - name: Determine tags
+        id: tags
+        run: |
+          set -euo pipefail
+
+          VERSION=$(sed -n 's/^version *= *"\([^"]*\)"/\1/p' Cargo.toml | head -n 1)
+          if [ -z "$VERSION" ]; then
+            echo "Version not found in Cargo.toml" >&2
+            exit 1
+          fi
+
+          CURRENT_TAG="v$VERSION"
+          PREVIOUS_TAG=$(git tag --sort=-creatordate | grep -Fvx "$CURRENT_TAG" || true)
+          PREVIOUS_TAG=$(printf '%s\n' "$PREVIOUS_TAG" | head -n 1)
+
+          IS_DRY_RUN="false"
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.dry_run || 'false' }}" = "true" ]; then
+            IS_DRY_RUN="true"
+          fi
+
+          if git rev-parse "$CURRENT_TAG" >/dev/null 2>&1; then
+            SHOULD_PUBLISH="false"
+          else
+            SHOULD_PUBLISH="true"
+          fi
+
+          echo "current_tag=$CURRENT_TAG" >> "$GITHUB_OUTPUT"
+          echo "previous_tag=$PREVIOUS_TAG" >> "$GITHUB_OUTPUT"
+          echo "should_publish=$SHOULD_PUBLISH" >> "$GITHUB_OUTPUT"
+          echo "is_dry_run=$IS_DRY_RUN" >> "$GITHUB_OUTPUT"
+
+  publish:
+    if: github.repository == 'ultralytics/template-rust' && (needs.check.outputs.should_publish == 'true' || needs.check.outputs.is_dry_run == 'true')
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
@@ -38,11 +93,32 @@ jobs:
           cargo test --all --all-features
 
       - name: Publish to crates.io
+        if: needs.check.outputs.is_dry_run != 'true'
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish
+
+      - name: Dry-run publish
+        if: needs.check.outputs.is_dry_run == 'true'
+        run: cargo publish --dry-run
+
+      - name: Create tag and release
+        if: needs.check.outputs.is_dry_run != 'true'
+        env:
+          CURRENT_TAG: ${{ needs.check.outputs.current_tag }}
+          PREVIOUS_TAG: ${{ needs.check.outputs.previous_tag }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
-            cargo publish --dry-run
-          else
-            cargo publish
+          git config --global user.name "UltralyticsAssistant"
+          git config --global user.email "web@ultralytics.com"
+
+          git tag -a "$CURRENT_TAG" -m "$(git log -1 --pretty=%B)"
+          git push origin "$CURRENT_TAG"
+
+          NOTES_ARGS=(--generate-notes)
+          if [ -n "$PREVIOUS_TAG" ]; then
+            NOTES_ARGS+=(--notes-start-tag "$PREVIOUS_TAG")
           fi
+
+          gh release create "$CURRENT_TAG" --title "$CURRENT_TAG" --target "$GITHUB_SHA" "${NOTES_ARGS[@]}"
