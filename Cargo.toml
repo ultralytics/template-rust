@@ -3,7 +3,7 @@
 [package]
 name = "ultralytics-template-rust"
 version = "0.0.1"
-edition = "2025"
+edition = "2024" # use the latest stable edition for new projects
 license = "AGPL-3.0-or-later"
 description = "Ultralytics Rust project template showcasing a minimal library and binary layout."
 repository = "https://github.com/ultralytics/template-rust"
