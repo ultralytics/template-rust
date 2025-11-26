@@ -9,7 +9,7 @@ description = "Ultralytics Rust project template showcasing a minimal library an
 repository = "https://github.com/ultralytics/template-rust"
 homepage = "https://www.ultralytics.com/"
 readme = "README.md"
-rust-version = "1.70"
+rust-version = "1.85" # edition 2024 requires at least Rust 1.85
 keywords = ["template", "ultralytics", "starter"]
 categories = ["development-tools"]
 
