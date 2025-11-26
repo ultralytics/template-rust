@@ -50,7 +50,7 @@ jobs:
           fi
 
           CURRENT_TAG="v$VERSION"
-          PREVIOUS_TAG=$(git tag --sort=-creatordate | grep -vx "$CURRENT_TAG" || true)
+          PREVIOUS_TAG=$(git tag --sort=-creatordate | grep -Fvx "$CURRENT_TAG" || true)
           PREVIOUS_TAG=$(printf '%s\n' "$PREVIOUS_TAG" | head -n 1)
 
           IS_DRY_RUN="false"
@@ -92,6 +92,16 @@ jobs:
           cargo clippy --all-targets --all-features -- -D warnings
           cargo test --all --all-features
 
+      - name: Publish to crates.io
+        if: needs.check.outputs.is_dry_run != 'true'
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish
+
+      - name: Dry-run publish
+        if: needs.check.outputs.is_dry_run == 'true'
+        run: cargo publish --dry-run
+
       - name: Create tag and release
         if: needs.check.outputs.is_dry_run != 'true'
         env:
@@ -112,13 +122,3 @@ jobs:
           fi
 
           gh release create "$CURRENT_TAG" --title "$CURRENT_TAG" --target "$GITHUB_SHA" "${NOTES_ARGS[@]}"
-
-      - name: Publish to crates.io
-        if: needs.check.outputs.is_dry_run != 'true'
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo publish
-
-      - name: Dry-run publish
-        if: needs.check.outputs.is_dry_run == 'true'
-        run: cargo publish --dry-run
