@@ -2,23 +2,32 @@
 
 # Documentation Directory (`docs/`)
 
-This directory contains the documentation for the [Ultralytics](https://github.com/ultralytics/ultralytics) project, built and managed using [MkDocs](https://www.mkdocs.org/).
+This directory contains documentation for the [Ultralytics](https://github.com/ultralytics/ultralytics) Rust template. It
+is intentionally lightweight so teams can layer on their preferred tooling without clutter.
 
 ## 📖 Overview
 
-- **MkDocs Configuration:** The primary configuration file for MkDocs is `mkdocs.yml`. This file defines the structure, navigation, and settings of our project documentation. You can learn more about [MkDocs configuration options](https://www.mkdocs.org/user-guide/configuration/).
-- **Documentation Files:** All documentation content is written in [Markdown](https://www.markdownguide.org/basic-syntax/), a lightweight markup language. These files reside within this `docs/` directory and are organized according to the structure defined in `mkdocs.yml`.
+- **rustdoc-first:** Inline `///` comments in `src/` power API docs (`cargo doc --open`).
+- **Markdown pages:** Expand project guides here using Markdown for quick start notes, architecture decisions, and API
+  walkthroughs.
+- **Optional generators:** Teams can add [mdBook](https://rust-lang.github.io/mdBook/) or `cargo doc` deploy workflows as
+  needed; keep configs in the repo root to avoid nesting.
 
 ## 🚀 Getting Started
 
 To work with the documentation locally:
 
-1.  **Install MkDocs:** Ensure MkDocs and its necessary extensions are installed in your Python environment. Follow the [MkDocs installation guide](https://www.mkdocs.org/user-guide/installation/) if you haven't already.
-2.  **Preview Documentation:** Navigate to the root directory of this repository in your terminal and run the command `mkdocs serve`. This starts a local development server, allowing you to preview the documentation site in your web browser, typically at `http://127.0.0.1:8000/`. The site will automatically reload when you save changes to the documentation files or the configuration.
-3.  **Build Documentation:** To generate the static HTML site (usually for deployment), use the `mkdocs build` command. This creates a `site/` directory containing the built documentation. For more details on commands, see the [MkDocs CLI documentation](https://www.mkdocs.org/user-guide/cli/).
+1. **Browse API docs:** `cargo doc --open` renders the crate documentation locally.
+2. **Preview Markdown:** Use your preferred Markdown preview (VS Code, mdBook, or static site generator) to iterate on
+   guides stored here.
+3. **Ship docs:** If you add mdBook or other tooling, document the commands in this file so contributors know how to
+   build and deploy the site.
 
-The documentation should be continuously updated alongside the project's development to maintain clarity, accuracy, and usefulness for both internal developers and external users exploring the [Ultralytics Docs](https://docs.ultralytics.com/).
+Update this directory as the Rust code evolves to keep examples aligned and onboarding smooth.
 
 ## 🙌 Contributing
 
-Contributions to improve the documentation are welcome! Whether it's fixing typos, clarifying explanations, adding examples, or translating content, your help is valuable. Please see our [Contributing Guide](https://docs.ultralytics.com/help/contributing/) for more details on how to get started. You can also find helpful [tips for contributing to Ultralytics open-source projects](https://www.ultralytics.com/blog/tips-to-start-contributing-to-ultralytics-open-source-projects) on our blog or ask questions on the [Ultralytics Community Forums](https://community.ultralytics.com/).
+Contributions to improve the documentation are welcome! Whether it's fixing typos, clarifying explanations, adding
+examples, or translating content, your help is valuable. Please see our
+[Contributing Guide](https://docs.ultralytics.com/help/contributing/) for more details on how to get started. You can also
+ask questions on the [Ultralytics Community Forums](https://community.ultralytics.com/).
