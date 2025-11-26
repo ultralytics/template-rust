@@ -1,0 +1,18 @@
+# © 2014-2025 Ultralytics Inc. 🚀 All rights reserved. CONFIDENTIAL: Unauthorized use or distribution prohibited.
+
+[package]
+name = "ultralytics-template-rust"
+version = "0.0.1"
+edition = "2024" # use the latest stable edition for new projects
+license = "AGPL-3.0-or-later"
+description = "Ultralytics Rust project template showcasing a minimal library and binary layout."
+repository = "https://github.com/ultralytics/template-rust"
+homepage = "https://www.ultralytics.com/"
+readme = "README.md"
+rust-version = "1.91" # edition 2024 requires Rust >= 1.85; pin to a current stable for CI
+keywords = ["template", "ultralytics", "starter"]
+categories = ["development-tools"]
+
+[dependencies]
+
+[dev-dependencies]
