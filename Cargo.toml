@@ -16,3 +16,8 @@ categories = ["development-tools", "science", "computer-vision"]
 [dependencies]
 
 [dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "example_bench"
+harness = false
