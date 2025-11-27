@@ -1,165 +1,148 @@
 # Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
-name: Publish
+# Publish crate to crates.io https://crates.io/crates/ultralytics-template-rust
+
+name: Publish to crates.io
 
 on:
-  workflow_dispatch:
-    inputs:
-      dry_run:
-        description: "Run cargo publish in dry-run mode"
-        required: false
-        default: false
-        type: boolean
   push:
     branches: [main]
-
-permissions:
-  contents: write
-
-env:
-  CARGO_TERM_COLOR: always
+  workflow_dispatch:
+    inputs:
+      publish:
+        type: boolean
+        description: Publish to crates.io
 
 jobs:
   check:
-    if: github.repository == 'ultralytics/template-rust'
+    if: github.repository == 'ultralytics/template-rust' && github.actor == 'glenn-jocher'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     outputs:
-      current_tag: ${{ steps.tags.outputs.current_tag }}
-      previous_tag: ${{ steps.tags.outputs.previous_tag }}
-      should_publish: ${{ steps.tags.outputs.should_publish }}
-      is_dry_run: ${{ steps.tags.outputs.is_dry_run }}
+      increment: ${{ steps.check_version.outputs.increment }}
+      current_tag: ${{ steps.check_version.outputs.current_tag }}
+      previous_tag: ${{ steps.check_version.outputs.previous_tag }}
+      crate_url: https://crates.io/crates/ultralytics-template-rust
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+      - uses: astral-sh/setup-uv@v7
+      - name: Install ultralytics-actions
+        run: uv pip install --system --no-cache ultralytics-actions
       - name: Fetch tags
+        run: git fetch --tags --force
+      - id: check_version
+        shell: python
         run: |
-          echo "Fetching tags..."
-          git fetch --tags --force
+          import os
+          import re
+          import subprocess
 
-      - name: Determine tags
-        id: tags
+          version = None
+          with open("Cargo.toml") as f:
+            for line in f:
+              m = re.search(r'version\s*=\s*"([^"]+)"', line)
+              if m:
+                version = m.group(1)
+                break
+          if not version:
+            raise SystemExit("Version not found in Cargo.toml")
+
+          current_tag = f"v{version}"
+          tags = subprocess.run(
+            ["git", "tag", "--sort=-creatordate"],
+            text=True,
+            capture_output=True,
+            check=True,
+          ).stdout.strip().splitlines()
+          previous_tag = next((t for t in tags if t != current_tag), "")
+
+          remote = subprocess.run(
+            ["git", "ls-remote", "--tags", "origin", current_tag],
+            text=True,
+            capture_output=True,
+          )
+          tag_exists = current_tag in tags or bool(remote.stdout.strip())
+          increment = str(not tag_exists)
+
+          print(f"Local version: {version}")
+          print(f"Current tag: {current_tag}")
+          print(f"Previous tag: {previous_tag or '<none>'}")
+          print(f"Tag exists: {tag_exists}")
+
+          os.system(f'echo "increment={increment}" >> $GITHUB_OUTPUT')
+          os.system(f'echo "current_tag={current_tag}" >> $GITHUB_OUTPUT')
+          os.system(f'echo "previous_tag={previous_tag}" >> $GITHUB_OUTPUT')
+          if increment == "True":
+            print("Ready to publish new version to crates.io ✅.")
+      - name: Tag and Release
+        if: steps.check_version.outputs.increment == 'True'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CURRENT_TAG: ${{ steps.check_version.outputs.current_tag }}
+          PREVIOUS_TAG: ${{ steps.check_version.outputs.previous_tag }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          set -euo pipefail
+          git config --global user.name "UltralyticsAssistant"
+          git config --global user.email "web@ultralytics.com"
+          git tag -a "$CURRENT_TAG" -m "$(git log -1 --pretty=%B)"
+          git push origin "$CURRENT_TAG"
+          ultralytics-actions-summarize-release
+          uv cache prune --ci
 
-          VERSION=$(sed -n 's/^version *= *"\([^"]*\)"/\1/p' Cargo.toml | head -n 1)
-          if [ -z "$VERSION" ]; then
-            echo "Version not found in Cargo.toml" >&2
-            exit 1
-          fi
-
-          CURRENT_TAG="v$VERSION"
-          PREVIOUS_TAG=$(git tag --sort=-creatordate | grep -Fvx "$CURRENT_TAG" || true)
-          PREVIOUS_TAG=$(printf '%s\n' "$PREVIOUS_TAG" | head -n 1)
-
-          IS_DRY_RUN="false"
-          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.dry_run || 'false' }}" = "true" ]; then
-            IS_DRY_RUN="true"
-          fi
-
-          if git rev-parse "$CURRENT_TAG" >/dev/null 2>&1; then
-            SHOULD_PUBLISH="false"
-          else
-            SHOULD_PUBLISH="true"
-          fi
-
-          echo "Detected version: $VERSION"
-          echo "Current tag: $CURRENT_TAG"
-          echo "Previous tag: ${PREVIOUS_TAG:-<none>}"
-          echo "Dry run: $IS_DRY_RUN"
-          echo "Should publish: $SHOULD_PUBLISH"
-
-          echo "current_tag=$CURRENT_TAG" >> "$GITHUB_OUTPUT"
-          echo "previous_tag=$PREVIOUS_TAG" >> "$GITHUB_OUTPUT"
-          echo "should_publish=$SHOULD_PUBLISH" >> "$GITHUB_OUTPUT"
-          echo "is_dry_run=$IS_DRY_RUN" >> "$GITHUB_OUTPUT"
+  build:
+    needs: check
+    if: needs.check.outputs.increment == 'True'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+      - run: cargo test --all --all-features
 
   publish:
-    if: github.repository == 'ultralytics/template-rust' && (needs.check.outputs.should_publish == 'true' || needs.check.outputs.is_dry_run == 'true')
-    needs: check
+    needs: [check, build]
+    if: needs.check.outputs.increment == 'True'
+    runs-on: ubuntu-latest
+    environment:
+      name: Release - crates.io
+      url: ${{ needs.check.outputs.crate_url }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  sbom:
+    needs: [check, build, publish]
+    if: needs.check.outputs.increment == 'True'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Generate Cargo.lock for SBOM
+        run: cargo generate-lockfile
+      - uses: anchore/sbom-action@v0
         with:
-          fetch-depth: 0
-
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache build artifacts
-        uses: Swatinem/rust-cache@v2
-
-      - name: Verify code quality
-        run: |
-          cargo fmt --all -- --check
-          cargo clippy --all-targets --all-features -- -D warnings
-          cargo test --all --all-features
-
-      - name: Publish to crates.io
-        if: needs.check.outputs.is_dry_run != 'true'
+          format: spdx-json
+          output-file: sbom.spdx.json
+          path: .
+      - run: gh release upload ${{ needs.check.outputs.current_tag }} sbom.spdx.json
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: |
-          echo "Publishing crate ${{ needs.check.outputs.current_tag }} to crates.io..."
-          cargo publish
-
-      - name: Dry-run publish
-        if: needs.check.outputs.is_dry_run == 'true'
-        run: |
-          echo "Running cargo publish --dry-run for ${{ needs.check.outputs.current_tag }}..."
-          cargo publish --dry-run
-
-      - name: Set up Python
-        if: needs.check.outputs.is_dry_run != 'true'
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.x"
-
-      - name: Set up uv
-        if: needs.check.outputs.is_dry_run != 'true'
-        uses: astral-sh/setup-uv@v7
-
-      - name: Summarize release
-        if: needs.check.outputs.is_dry_run != 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CURRENT_TAG: ${{ needs.check.outputs.current_tag }}
-          PREVIOUS_TAG: ${{ needs.check.outputs.previous_tag }}
-        run: |
-          set -euo pipefail
-          if [ -z "${OPENAI_API_KEY:-}" ]; then
-            echo "OPENAI_API_KEY is not set; cannot generate AI release summary." >&2
-            exit 1
-          fi
-          uv pip install --system --no-cache ultralytics-actions
-          ultralytics-actions-summarize-release
-
-      - name: Create tag and release
-        if: needs.check.outputs.is_dry_run != 'true'
-        env:
-          CURRENT_TAG: ${{ needs.check.outputs.current_tag }}
-          PREVIOUS_TAG: ${{ needs.check.outputs.previous_tag }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.name "UltralyticsAssistant"
-          git config --global user.email "web@ultralytics.com"
-
-          echo "Tagging $CURRENT_TAG and generating release notes..."
-          git tag -a "$CURRENT_TAG" -m "$(git log -1 --pretty=%B)"
-          git push origin "$CURRENT_TAG"
-
-          NOTES_ARGS=(--generate-notes)
-          if [ -n "$PREVIOUS_TAG" ]; then
-            NOTES_ARGS+=(--notes-start-tag "$PREVIOUS_TAG")
-          fi
-
-          gh release create "$CURRENT_TAG" --title "$CURRENT_TAG" --target "$GITHUB_SHA" "${NOTES_ARGS[@]}"
-          echo "Release $CURRENT_TAG created."
