@@ -134,20 +134,14 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.x"
-      - uses: astral-sh/setup-uv@v7
-      - run: |
-          uv venv sbom-env
-          uv pip install -e .
-        env:
-          VIRTUAL_ENV: sbom-env
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
       - uses: anchore/sbom-action@v0
         with:
           format: spdx-json
           output-file: sbom.spdx.json
-          path: sbom-env
+          path: .
+          dependencies: true
       - run: gh release upload ${{ needs.check.outputs.current_tag }} sbom.spdx.json
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
