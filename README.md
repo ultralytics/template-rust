@@ -103,6 +103,13 @@ fn main() {
 }
 ```
 
+### 🧾 Releases
+
+- Publishes on `main` pushes when a new `v<version>` tag is needed; manual runs support `dry_run: true`.
+- Crate name: `ultralytics-template-rust`; tags follow `v<version>` from `Cargo.toml`.
+- Requires repository secrets: `CARGO_REGISTRY_TOKEN` (crates.io), `GITHUB_TOKEN` (built-in), and `OPENAI_API_KEY` for AI release notes.
+- Workflow guards: fmt, clippy, tests must pass; tag/release are created only after a successful publish.
+
 ## 🔧 Utilizing the Template
 
 For Ultralytics team members and external contributors:
