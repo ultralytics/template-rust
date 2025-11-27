@@ -21,3 +21,9 @@ llvm-cov-report/
 
 # Logs
 *.log
+
+# Benchmark results
+/target/criterion/
+
+# Cargo deny cache
+.cargo-deny/
