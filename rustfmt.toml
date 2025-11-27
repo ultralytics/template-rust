@@ -11,7 +11,7 @@ use_field_init_shorthand = true
 # We choose a wider comment width, as this tends to make comments more readable than truncating at
 # 80 characters.
 wrap_comments = true
-comment_width = 100
+comment_width = 120
 format_code_in_doc_comments = true
 
 # `#[doc = "..."]` -> `/// ...`
