@@ -114,6 +114,33 @@ jobs:
           echo "Running cargo publish --dry-run for ${{ needs.check.outputs.current_tag }}..."
           cargo publish --dry-run
 
+      - name: Set up Python
+        if: needs.check.outputs.is_dry_run != 'true'
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      - name: Set up uv
+        if: needs.check.outputs.is_dry_run != 'true'
+        uses: astral-sh/setup-uv@v7
+
+      - name: Summarize release
+        if: needs.check.outputs.is_dry_run != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CURRENT_TAG: ${{ needs.check.outputs.current_tag }}
+          PREVIOUS_TAG: ${{ needs.check.outputs.previous_tag }}
+        run: |
+          set -euo pipefail
+          if [ -z "${OPENAI_API_KEY:-}" ]; then
+            echo "OPENAI_API_KEY is not set; cannot generate AI release summary." >&2
+            exit 1
+          fi
+          uv pip install --system --no-cache ultralytics-actions
+          ultralytics-actions-summarize-release
+
       - name: Create tag and release
         if: needs.check.outputs.is_dry_run != 'true'
         env:
