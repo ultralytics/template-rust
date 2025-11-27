@@ -3,6 +3,9 @@
 # Configuration for https://rust-lang.github.io/rustfmt/
 edition = "2024"
 
+# Enable unstable features (requires nightly)
+unstable_features = true
+
 # E.g. Foo { a, b, c }
 use_field_init_shorthand = true
 
