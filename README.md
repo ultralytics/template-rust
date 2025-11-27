@@ -11,7 +11,7 @@ ensure consistency, maintain high quality standards, and accelerate the setup pr
 [![Ultralytics Actions](https://github.com/ultralytics/template-rust/actions/workflows/format.yml/badge.svg)](https://github.com/ultralytics/template-rust/actions/workflows/format.yml)
 [![Publish](https://github.com/ultralytics/template-rust/actions/workflows/publish.yml/badge.svg)](https://github.com/ultralytics/template-rust/actions/workflows/publish.yml)
 [![codecov](https://codecov.io/gh/ultralytics/template-rust/graph/badge.svg?token=K9IunpFzjS)](https://codecov.io/gh/ultralytics/template-rust)
-[![Rust MSRV](https://img.shields.io/badge/MSRV-1.91-blue)](https://github.com/ultralytics/template-rust/blob/main/Cargo.toml)
+![Crates.io MSRV](https://img.shields.io/crates/msrv/ultralytics-template-rust)
 
 [![Ultralytics Discord](https://img.shields.io/discord/1089800235347353640?logo=discord&logoColor=white&label=Discord&color=blue)](https://discord.com/invite/ultralytics)
 [![Ultralytics Forums](https://img.shields.io/discourse/users?server=https%3A%2F%2Fcommunity.ultralytics.com&logo=discourse&label=Forums&color=blue)](https://community.ultralytics.com/)
