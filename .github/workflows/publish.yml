@@ -46,7 +46,7 @@ jobs:
           version = None
           with open("Cargo.toml") as f:
             for line in f:
-              m = re.match(r'version\s*=\s*"([^"]+)"', line)
+              m = re.search(r'version\s*=\s*"([^"]+)"', line)
               if m:
                 version = m.group(1)
                 break
