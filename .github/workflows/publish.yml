@@ -36,7 +36,9 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch tags
-        run: git fetch --tags --force
+        run: |
+          echo "Fetching tags..."
+          git fetch --tags --force
 
       - name: Determine tags
         id: tags
@@ -63,6 +65,12 @@ jobs:
           else
             SHOULD_PUBLISH="true"
           fi
+
+          echo "Detected version: $VERSION"
+          echo "Current tag: $CURRENT_TAG"
+          echo "Previous tag: ${PREVIOUS_TAG:-<none>}"
+          echo "Dry run: $IS_DRY_RUN"
+          echo "Should publish: $SHOULD_PUBLISH"
 
           echo "current_tag=$CURRENT_TAG" >> "$GITHUB_OUTPUT"
           echo "previous_tag=$PREVIOUS_TAG" >> "$GITHUB_OUTPUT"
@@ -96,11 +104,15 @@ jobs:
         if: needs.check.outputs.is_dry_run != 'true'
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo publish
+        run: |
+          echo "Publishing crate ${{ needs.check.outputs.current_tag }} to crates.io..."
+          cargo publish
 
       - name: Dry-run publish
         if: needs.check.outputs.is_dry_run == 'true'
-        run: cargo publish --dry-run
+        run: |
+          echo "Running cargo publish --dry-run for ${{ needs.check.outputs.current_tag }}..."
+          cargo publish --dry-run
 
       - name: Create tag and release
         if: needs.check.outputs.is_dry_run != 'true'
@@ -113,6 +125,7 @@ jobs:
           git config --global user.name "UltralyticsAssistant"
           git config --global user.email "web@ultralytics.com"
 
+          echo "Tagging $CURRENT_TAG and generating release notes..."
           git tag -a "$CURRENT_TAG" -m "$(git log -1 --pretty=%B)"
           git push origin "$CURRENT_TAG"
 
@@ -122,3 +135,4 @@ jobs:
           fi
 
           gh release create "$CURRENT_TAG" --title "$CURRENT_TAG" --target "$GITHUB_SHA" "${NOTES_ARGS[@]}"
+          echo "Release $CURRENT_TAG created."
