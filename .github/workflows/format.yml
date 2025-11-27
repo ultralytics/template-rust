@@ -40,6 +40,8 @@ jobs:
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt
 
       - name: Check Rust formatting
         run: cargo fmt --all -- --check
