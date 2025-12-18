@@ -1,11 +1,11 @@
 // Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use criterion::{Criterion, criterion_group, criterion_main};
 use ultralytics_template_rust::add_numbers;
 
 fn benchmark_add_numbers(c: &mut Criterion) {
     c.bench_function("add_numbers", |b| {
-        b.iter(|| add_numbers(black_box(100), black_box(200)))
+        b.iter(|| add_numbers(std::hint::black_box(100), std::hint::black_box(200)))
     });
 }
 
