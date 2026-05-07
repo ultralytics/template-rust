@@ -3,14 +3,18 @@
 [package]
 name = "ultralytics-template-rust"
 version = "0.0.6"
-edition = "2024" # use the latest stable edition for new projects
+edition = "2024"
+rust-version = "1.91"
+authors = [
+    "Glenn Jocher <glenn.jocher@ultralytics.com>",
+    "Onuralp Sezer <onuralp@ultralytics.com>",
+]
 license = "AGPL-3.0-or-later"
 description = "Ultralytics Rust project template showcasing a minimal library and binary layout."
 repository = "https://github.com/ultralytics/template-rust"
 homepage = "https://www.ultralytics.com/"
 documentation = "https://docs.ultralytics.com"
 readme = "README.md"
-rust-version = "1.91" # edition 2024 requires Rust >= 1.85; pin to a current stable for CI
 keywords = ["ultralytics", "template", "ml", "ai", "yolo"]
 categories = ["development-tools", "science", "computer-vision"]
 include = [
