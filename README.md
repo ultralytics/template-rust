@@ -92,7 +92,7 @@ Using the published crate from another project (after release):
 ```toml
 # Cargo.toml
 [dependencies]
-ultralytics-template-rust = "0.0.5"
+ultralytics-template-rust = "0.0.6"
 ```
 
 ```rust
