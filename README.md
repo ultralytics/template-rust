@@ -129,7 +129,7 @@ suggesting features, or submitting code changes, your involvement is crucial.
 
 - **Reporting Issues:** Encounter a bug? Please report it on [GitHub Issues](https://github.com/ultralytics/template-rust/issues).
 - **Feature Requests:** Have an idea for improvement? Share it via [GitHub Issues](https://github.com/ultralytics/template-rust/issues).
-- **Pull Requests:** Want to contribute code? Please read our [Contributing Guide](https://docs.ultralytics.com/help/contributing/) first, then submit a Pull Request.
+- **Pull Requests:** Want to contribute code? Please read our [Contributing Guide](https://docs.ultralytics.com/help/contributing) first, then submit a Pull Request.
 - **Feedback:** Share your thoughts and experiences by participating in our official [Survey](https://www.ultralytics.com/survey?utm_source=github&utm_medium=social&utm_campaign=Survey).
 
 A heartfelt thank you 🙏 goes out to all our contributors! Your efforts help make Ultralytics tools better for everyone.
