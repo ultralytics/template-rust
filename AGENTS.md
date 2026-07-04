@@ -54,4 +54,4 @@ Publishing: `publish.yml` publishes to crates.io when the `Cargo.toml` version i
 
 - License headers (`// Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license` in Rust files) are added automatically by Ultralytics Actions — don't add or revert them manually.
 - Import style is enforced by `rustfmt.toml`: `StdExternalCrate` grouping with module granularity; comments wrap at 120.
-- Edition 2024. Public APIs get doc comments with runnable examples (doc tests run in CI).
+- Edition 2024. Public APIs get doc comments, with runnable examples where useful (doc tests run in CI).
