@@ -48,7 +48,7 @@ Toolchain: `rust-toolchain.toml` pins nightly locally because `rustfmt.toml` use
 
 This is the Ultralytics template for new Rust projects — a minimal lib + bin crate meant to be copied and adapted. `src/lib.rs` exposes the example API (`add_numbers()`, `run_example()`) with doc-tested examples and unit tests; `src/main.rs` is a thin CLI that prints `run_example()`, and integration tests (`tests/basic.rs`) validate both library behavior and the spawned CLI's output. `benches/example_bench.rs` is a criterion benchmark (`harness = false` in `Cargo.toml`). `format.yml` runs Ultralytics Actions on PRs (Prettier, codespell, link checks, AI labels/summaries, plus a nightly `cargo fmt` check) and commits fixes back to the PR branch.
 
-Publishing: `publish.yml` (push to main or manual dispatch, gated to the repo owner as actor) publishes to crates.io when the `Cargo.toml` version has no existing `v<version>` git tag.
+Publishing: `publish.yml` (push to main or manual dispatch, gated to actor `glenn-jocher` in the upstream repo) publishes to crates.io when the `Cargo.toml` version has no existing `v<version>` git tag.
 
 ## Conventions
 

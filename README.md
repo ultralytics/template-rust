@@ -24,8 +24,9 @@ This template is organized for intuitive navigation and a clear understanding of
 - `src/lib.rs`: Core library code for the crate.
 - `src/main.rs`: Example binary entrypoint that exercises the library.
 - `tests/`: Integration tests executed with `cargo test`.
+- `benches/`: Criterion benchmarks executed with `cargo bench`.
 - `docs/`: Optional Markdown docs that complement Rustdoc output.
-- `Cargo.toml`: Package metadata, dependencies, and workspace configuration.
+- `Cargo.toml`: Package metadata, dependencies, and build configuration.
 - `.gitignore`: Git ignore rules tailored for Cargo builds and IDEs.
 - `LICENSE`: Project license file (default AGPL-3.0-or-later).
 - `.github/workflows/`: GitHub Actions for CI, formatting, and publishing the crate.
@@ -38,6 +39,8 @@ your-project/
 │   └── main.rs
 ├── tests/                     # Integration tests
 │   └── basic.rs
+├── benches/                   # Criterion benchmarks
+│   └── example_bench.rs
 ├── docs/                      # Additional Markdown docs (optional)
 │   └── README.md
 ├── .github/workflows/         # CI, formatting, publish pipelines
@@ -106,10 +109,10 @@ fn main() {
 
 ### 🧾 Releases
 
-- Publishes on `main` pushes when a new `v<version>` tag is needed; manual runs support `dry_run: true`.
+- Publishes on `main` pushes (or manual `workflow_dispatch`) when `Cargo.toml`'s version has no matching `v<version>` git tag yet.
 - Crate name: `ultralytics-template-rust`; tags follow `v<version>` from `Cargo.toml`.
 - Requires repository secrets: `CARGO_REGISTRY_TOKEN` (crates.io), `GITHUB_TOKEN` (built-in), and `OPENAI_API_KEY` for AI release notes.
-- Workflow guards: fmt, clippy, tests must pass; tag/release are created only after a successful publish.
+- Workflow order: the `check` job cuts the `v<version>` tag and GitHub release first, then `cargo publish` runs only after fmt, clippy, and tests pass.
 
 ## 🔧 Utilizing the Template
 
