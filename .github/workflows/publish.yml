@@ -15,7 +15,7 @@ on:
 
 jobs:
   check:
-    if: github.repository == 'ultralytics/template-rust'
+    if: github.repository == 'ultralytics/template-rust' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -81,7 +81,7 @@ jobs:
           if increment == "True":
             print("Ready to publish new version to crates.io ✅.")
       - name: Tag and Release
-        if: steps.check_version.outputs.increment == 'True'
+        if: steps.check_version.outputs.increment == 'True' && (github.event_name == 'push' || inputs.publish == true)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CURRENT_TAG: ${{ steps.check_version.outputs.current_tag }}
@@ -97,7 +97,7 @@ jobs:
 
   build:
     needs: check
-    if: needs.check.outputs.increment == 'True'
+    if: needs.check.outputs.increment == 'True' && (github.event_name == 'push' || inputs.publish == true)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -113,7 +113,7 @@ jobs:
 
   publish:
     needs: [check, build]
-    if: needs.check.outputs.increment == 'True'
+    if: needs.check.outputs.increment == 'True' && (github.event_name == 'push' || inputs.publish == true)
     runs-on: ubuntu-latest
     environment:
       name: Release - crates.io
@@ -130,7 +130,7 @@ jobs:
 
   sbom:
     needs: [check, build, publish]
-    if: needs.check.outputs.increment == 'True'
+    if: needs.check.outputs.increment == 'True' && (github.event_name == 'push' || inputs.publish == true)
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -145,6 +145,6 @@ jobs:
           format: spdx-json
           output-file: sbom.spdx.json
           path: .
-      - run: gh release upload ${{ needs.check.outputs.current_tag }} sbom.spdx.json
+      - run: gh release upload ${{ needs.check.outputs.current_tag }} sbom.spdx.json --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
