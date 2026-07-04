@@ -15,7 +15,7 @@ on:
 
 jobs:
   check:
-    if: github.repository == 'ultralytics/template-rust' && github.actor == 'glenn-jocher'
+    if: github.repository == 'ultralytics/template-rust'
     runs-on: ubuntu-latest
     permissions:
       contents: write
