@@ -33,13 +33,13 @@ After opening a PR:
 ## Commands
 
 ```bash
-cargo test --all --all-features        # run all tests (unit, integration, doc tests)
-cargo test example_output_matches_cli  # run one test by name
-cargo fmt --all                        # format (nightly rustfmt via rust-toolchain.toml)
-cargo clippy --all-targets --all-features -- -D warnings  # lint (CI fails on any warning)
-cargo bench                            # criterion benchmarks (benches/example_bench.rs)
-cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info  # coverage (CI command)
-cargo deny check                       # license/advisory/source checks (deny.toml)
+cargo test --all --all-features                                          # run all tests (unit, integration, doc tests)
+cargo test example_output_matches_cli                                    # run one test by name
+cargo fmt --all                                                          # format (nightly rustfmt via rust-toolchain.toml)
+cargo clippy --all-targets --all-features -- -D warnings                 # lint (CI fails on any warning)
+cargo bench                                                              # criterion benchmarks (benches/example_bench.rs)
+cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info # coverage (CI command)
+cargo deny check                                                         # license/advisory/source checks (deny.toml)
 ```
 
 Toolchain: `rust-toolchain.toml` pins nightly locally because `rustfmt.toml` uses unstable options, but CI runs clippy and tests on stable and `Cargo.toml` sets `rust-version = "1.91"` — keep code stable-compatible. CI matrix is ubuntu/macos/windows.
