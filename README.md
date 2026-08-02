@@ -27,6 +27,7 @@ This template is organized for intuitive navigation and a clear understanding of
 - `benches/`: Criterion benchmarks executed with `cargo bench`.
 - `docs/`: Optional Markdown docs that complement Rustdoc output.
 - `Cargo.toml`: Package metadata, dependencies, and build configuration.
+- `rust-toolchain.toml`, `rustfmt.toml`, `clippy.toml`, `deny.toml`: Toolchain pin, formatting, lint, and dependency-audit configuration.
 - `.gitignore`: Git ignore rules tailored for Cargo builds and IDEs.
 - `LICENSE`: Project license file (default AGPL-3.0-or-later).
 - `.github/workflows/`: GitHub Actions for CI, formatting, and publishing the crate.
@@ -48,6 +49,10 @@ your-project/
 │   ├── format.yml
 │   └── publish.yml
 ├── .gitignore                 # Git ignore rules for Rust
+├── rust-toolchain.toml        # Toolchain pin (nightly, for unstable rustfmt options)
+├── rustfmt.toml               # Formatting configuration
+├── clippy.toml                # Clippy lint configuration
+├── deny.toml                  # cargo-deny license, advisory, and source checks
 ├── Cargo.toml                 # Cargo package metadata
 ├── LICENSE                    # Project license file
 └── README.md                  # This file
