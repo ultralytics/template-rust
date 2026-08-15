@@ -28,16 +28,10 @@ body:
         Please select the component where you found the bug.
       multiple: true
       options:
-        - "Install"
-        - "Setup"
-        - "Configuration"
+        - "Install or build"
         - "CLI"
-        - "API"
-        - "Training"
-        - "Validation"
-        - "Prediction"
-        - "Export"
-        - "Integration"
+        - "Library API"
+        - "Configuration"
         - "Documentation"
         - "Other"
     validations:
