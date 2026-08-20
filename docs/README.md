@@ -1,4 +1,4 @@
-<a href="https://www.ultralytics.com/"><img src="https://raw.githubusercontent.com/ultralytics/assets/main/logo/Ultralytics_Logotype_Original.svg" width="320" alt="Ultralytics logo"></a>
+<a href="https://www.ultralytics.com"><img src="https://raw.githubusercontent.com/ultralytics/assets/main/logo/Ultralytics_Logotype_Original.svg" width="320" alt="Ultralytics logo"></a>
 
 # Documentation Directory (`docs/`)
 
@@ -30,4 +30,4 @@ Update this directory as the Rust code evolves to keep examples aligned and onbo
 Contributions to improve the documentation are welcome! Whether it's fixing typos, clarifying explanations, adding
 examples, or translating content, your help is valuable. Please see our
 [Contributing Guide](https://docs.ultralytics.com/help/contributing) for more details on how to get started. You can also
-ask questions on the [Ultralytics Community Forums](https://community.ultralytics.com/).
+ask questions on the [Ultralytics Community Forums](https://community.ultralytics.com).
