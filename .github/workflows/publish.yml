@@ -43,6 +43,9 @@ jobs:
           import os
           import re
           import subprocess
+          from pathlib import Path
+          from urllib.error import HTTPError
+          from urllib.request import Request, urlopen
 
           version = None
           with open("Cargo.toml") as f:
@@ -63,18 +66,21 @@ jobs:
           ).stdout.strip().splitlines()
           previous_tag = next((t for t in tags if t != current_tag), "")
 
-          remote = subprocess.run(
-            ["git", "ls-remote", "--tags", "origin", current_tag],
-            text=True,
-            capture_output=True,
-          )
-          tag_exists = current_tag in tags or bool(remote.stdout.strip())
-          increment = str(not tag_exists)
+          # Gate on crates.io, not the tag, so a rerun after a failed release or publish still finishes the job
+          name = re.search(r'^name\s*=\s*"([^"]+)"', Path("Cargo.toml").read_text(), re.M).group(1)
+          try:
+            urlopen(Request(f"https://crates.io/api/v1/crates/{name}/{version}", headers={"User-Agent": "ultralytics-publish"}), timeout=30)
+            published = True
+          except HTTPError as e:
+            if e.code != 404:
+              raise
+            published = False
+          increment = str(not published)
 
           print(f"Local version: {version}")
           print(f"Current tag: {current_tag}")
           print(f"Previous tag: {previous_tag or '<none>'}")
-          print(f"Tag exists: {tag_exists}")
+          print(f"Published on crates.io: {published}")
 
           os.system(f'echo "increment={increment}" >> $GITHUB_OUTPUT')
           os.system(f'echo "current_tag={current_tag}" >> $GITHUB_OUTPUT')
@@ -89,10 +95,12 @@ jobs:
           PREVIOUS_TAG: ${{ steps.check_version.outputs.previous_tag }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          git config --global user.name "UltralyticsAssistant"
-          git config --global user.email "web@ultralytics.com"
-          git tag -a "$CURRENT_TAG" -m "$(git log -1 --pretty=%B)"
-          git push origin "$CURRENT_TAG"
+          if [ -z "$(git tag -l "$CURRENT_TAG")" ]; then
+            git config --global user.name "UltralyticsAssistant"
+            git config --global user.email "web@ultralytics.com"
+            git tag -a "$CURRENT_TAG" -m "$(git log -1 --pretty=%B)"
+            git push origin "$CURRENT_TAG"
+          fi
           ultralytics-actions-summarize-release
           uv cache prune --ci
 
